@@ -5,51 +5,52 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import logoUSU from "../../public/images/logo-usu.webp";
 
-interface studentProp {
+type Identity = {
 	id: string,
 	nim: string,
 	email: string,
 	name: string,
-	address: {
-		country: string,
-		city: string,
-		postCode: string
-	},
-	favouriteSubjects: string[],
+	favouriteSubjects: Array<string>,
 }
 
+type Address = {
+	county: string,
+	city: string,
+	postCode: string
+}
+
+type Student = Identity & Address;
+
 export default function Home() {
-	const [students, setStudents] = useState<studentProp[]>([]);
-	const [searchStudentResult, setSearchStudentResult] = useState<studentProp[]>([]);
-	const [searchInput, setSearchInput] = useState('');
+	const [students, setStudents] = useState<Student[]>([]);
+	const [searchStudentResult, setSearchStudentResult] = useState<Student[]>([]);
+	const [searchQuery, setSearchQuery] = useState('');
 
 	useEffect(() => {
+		resetSearchStudent();
 		axios.get('http://localhost:8080/api/v1/students')
-			.then(response => {
-				const result = response.data;
-				setStudents(result);
-			});
-	}, [students]);
+			.then(response => setStudents(response.data));
+	}, [searchQuery]);
 
-	const onSearchHandler = async (event: any) => {
-		event.preventDefault();
-		
-		const value: string = event.target.elements[0].value;
-		setSearchInput(value);
-		
-		if (value.length == 9) {
-			axios.get(`http://localhost:8080/api/v1/students/nim/${value}`)
-				.then(response => {
-					const result = response.data;
-					setSearchStudentResult(result);
-				});
+	const searchStudent = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		if (searchQuery.length == 9) {
+			axios.get(`http://localhost:8080/api/v1/students/nim/${searchQuery}`)
+				.then(response => setSearchStudentResult(response.data));
 		} 
+	}
+
+	const resetSearchStudent = () => {
+		if (searchQuery.length !== 9) {
+			setSearchStudentResult([]);
+		}
 	}
 
 	const onDeleteHandler = async (id: string) => {
 		axios.delete(`http://localhost:8080/api/v1/students/${id}`)
 			.then(() => {
 				alert(`Mahasiswa dengan id ${id} berhasil dihapus`);
+				location.reload();
 			});
     }
 	
@@ -71,8 +72,8 @@ export default function Home() {
 					<h2 className='font-body font-medium text-xl'>Kumpulan data mahasiswa Universitas Sumatera Utara</h2>
 				</hgroup>
 				<div className='flex justify-center items-center gap-4 w-full'>
-					<form onSubmit={onSearchHandler} className="flex items-center gap-4 max-w-sm w-full">
-						<input type="text" placeholder="Masukkan NIM" className='placeholder:text-slate-600 w-full h-10 px-3 py-3 shadow-sm rounded-lg border-[1.5px] border-slate-700 bg-white text-base text-slate-900 transition duration-[0.2s] ease-[cubic-bezier(.4,0,1,1)]focus:border-indigo-500 focus:outline-none' />
+					<form onSubmit={searchStudent} className="flex items-center gap-4 max-w-sm w-full">
+						<input type="text" onChange={(e) => setSearchQuery(e.target.value)} placeholder="Masukkan NIM" className='placeholder:text-slate-600 w-full h-10 px-3 py-3 shadow-sm rounded-lg border-[1.5px] border-slate-700 bg-white text-base text-slate-900 transition duration-[0.2s] ease-[cubic-bezier(.4,0,1,1)]focus:border-indigo-500 focus:outline-none' />
 						<button className='flex justify-center items-center gap-1 px-4 py-2 rounded-lg bg-indigo-600 font-medium text-base text-white transition ease-in-out duration-150 hocus:ring-2 hocus:ring-offset-2 hocus:ring-indigo-600 hocus:ring-offset-slate-900 focus:outline-none active:bg-indigo-700'>
 							Cari
 						</button>
@@ -84,7 +85,7 @@ export default function Home() {
 					</Link>
 				</div>
 				<div className='flex justify-center items-center gap-10 w-full'>
-					{searchInput.length > 1 ? (
+					{searchQuery.length > 1 ? (
 						searchStudentResult.map((student: any) => {
 							return (
 								<div key={student.id} className="flex flex-col gap-6 max-w-sm w-fit rounded-lg p-5 bg-slate-200">
