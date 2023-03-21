@@ -32,7 +32,7 @@ export default function Home() {
 	const searchStudent = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (searchQuery.length == 9) {
-			axios.get(`http://localhost:8080/api/v1/students/nim/${searchQuery}`)
+			await axios.get(`http://localhost:8080/api/v1/students/nim/${searchQuery}`)
 				.then(response => setSearchStudentResult(response.data));
 		} 
 	}

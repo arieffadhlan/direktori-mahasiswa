@@ -35,6 +35,11 @@ public class StudentController {
         return studentService.getStudentByEmail(email);
     }
 
+    @GetMapping("edit/{id}")
+    public Student editStudent(@PathVariable String id) {
+        return studentService.getStudentById(id);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Student addStudent(@RequestBody Student student) {
