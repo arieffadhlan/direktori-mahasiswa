@@ -91,8 +91,8 @@ export default function edit({ props }: any) {
     return (
         <section className='flex flex-col justify-center items-center gap-6 py-16'>
             <hgroup className='flex flex-col justify-center items-center gap-5'>
-                <h1 className='font-heading font-bold text-6xl'>Tambah Mahasiswa Baru</h1>
-                <h2 className='font-body font-medium text-xl'>Lengkapi data berikut untuk menambahkan mahasiswa baru</h2>
+                <h1 className='font-heading font-bold text-6xl'>Ubah data mahasiswa</h1>
+                <h2 className='font-body font-medium text-xl'>Ubah salah satu data berikut untuk memperbarui data mahasiswa</h2>
             </hgroup>
             <div className='flex justify-center items-center gap-4 w-full'>
                 <form onSubmit={onHandleSubmit} className="flex flex-col items-center gap-4 max-w-sm w-full">
