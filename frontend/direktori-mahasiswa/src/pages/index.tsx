@@ -5,21 +5,18 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import logoUSU from "../../public/images/logo-usu.webp";
 
-type Identity = {
+type Student = {
 	id: string,
 	nim: string,
 	email: string,
 	name: string,
+	address: {
+		country: string,
+		city: string,
+		postCode: string
+	}
 	favouriteSubjects: Array<string>,
 }
-
-type Address = {
-	county: string,
-	city: string,
-	postCode: string
-}
-
-type Student = Identity & Address;
 
 export default function Home() {
 	const [students, setStudents] = useState<Student[]>([]);
@@ -46,7 +43,7 @@ export default function Home() {
 		}
 	}
 
-	const onDeleteHandler = async (id: string) => {
+	const deleteStudent = async (id: string) => {
 		axios.delete(`http://localhost:8080/api/v1/students/${id}`)
 			.then(() => {
 				alert(`Mahasiswa dengan id ${id} berhasil dihapus`);
@@ -86,7 +83,7 @@ export default function Home() {
 				</div>
 				<div className='flex justify-center items-center gap-10 w-full'>
 					{searchQuery.length > 1 ? (
-						searchStudentResult.map((student: any) => {
+						searchStudentResult.map((student: Student) => {
 							return (
 								<div key={student.id} className="flex flex-col gap-6 max-w-sm w-fit rounded-lg p-5 bg-slate-200">
 									<div className='flex gap-10'>
@@ -104,7 +101,7 @@ export default function Home() {
 											<div>: {student.address.city}</div>
 											<div className='flex gap-1'>:
 												<div className='flex flex-col'>
-													{student.favouriteSubjects.map((favouriteSubject: any, index: any) => (
+													{student.favouriteSubjects.map((favouriteSubject: string, index: number) => (
 														<div className='w-full' key={index}>- {favouriteSubject}</div>
 													))}
 												</div>
@@ -117,7 +114,7 @@ export default function Home() {
 												Edit
 											</button>
 										</Link>
-										<button onClick={() => onDeleteHandler(student.id)} className='flex justify-center items-center gap-1 w-full px-4 py-2 rounded-lg bg-red-600 font-medium text-base text-white transition ease-in-out duration-150 hocus:ring-2 hocus:ring-offset-2 hocus:ring-red-600 hocus:ring-offset-red-900 focus:outline-none active:bg-red-700'>
+										<button onClick={() => deleteStudent(student.id)} className='flex justify-center items-center gap-1 w-full px-4 py-2 rounded-lg bg-red-600 font-medium text-base text-white transition ease-in-out duration-150 hocus:ring-2 hocus:ring-offset-2 hocus:ring-red-600 hocus:ring-offset-red-900 focus:outline-none active:bg-red-700'>
 											Hapus
 										</button>
 									</div>
@@ -125,7 +122,7 @@ export default function Home() {
 							)
 						})
 					) : (
-						students.map((student: any) => {
+						students.map((student: Student) => {
 							return (
 								<div key={student.id} className="flex flex-col gap-6 max-w-sm w-fit rounded-lg p-5 bg-slate-200">
 									<div className='flex gap-10'>
@@ -143,7 +140,7 @@ export default function Home() {
 											<div>: {student.address.city}</div>
 											<div className='flex gap-1'>:
 												<div className='flex flex-col'>
-													{student.favouriteSubjects.map((favouriteSubject: any, index: any) => (
+													{student.favouriteSubjects.map((favouriteSubject: string, index: number) => (
 														<div className='w-full' key={index}>- {favouriteSubject}</div>
 													))}
 												</div>
@@ -156,7 +153,7 @@ export default function Home() {
 												Edit
 											</button>
 										</Link>
-										<button onClick={() => onDeleteHandler(student.id)} className='flex justify-center items-center gap-1 w-full px-4 py-2 rounded-lg bg-red-600 font-medium text-base text-white transition ease-in-out duration-150 hocus:ring-2 hocus:ring-offset-2 hocus:ring-red-600 hocus:ring-offset-red-900 focus:outline-none active:bg-red-700'>
+										<button onClick={() => deleteStudent(student.id)} className='flex justify-center items-center gap-1 w-full px-4 py-2 rounded-lg bg-red-600 font-medium text-base text-white transition ease-in-out duration-150 hocus:ring-2 hocus:ring-offset-2 hocus:ring-red-600 hocus:ring-offset-red-900 focus:outline-none active:bg-red-700'>
 											Hapus
 										</button>
 									</div>
